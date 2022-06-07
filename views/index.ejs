@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto_parts</title>
+
+    <!-- CSS (load bootstrap from a CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+        body { padding-top:50px; }
+    </style>
+<body>
+<table class="table table-striped">
+    <thead>
+
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">Название</th>
+        <th scope="col">Цена</th>
+        <th scope="col">id модели автомобиля</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% parts.forEach(function(entry,key) {%>
+    <tr>
+
+        <td scope="row"><%= ++key%></td>
+        <td><%= entry.name%></td>
+        <td><%= entry.price%></td>
+        <td><%= entry.car_models_id%></td>
+        <td>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#updateAutoParts<%= entry.id%>" data-bs-whatever="">Изменить</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deleteAutoParts<%= entry.id%>" data-bs-whatever="">Удалить</button>
+        </td>
+        <div class="modal fade" id="deleteAutoParts<%= entry.id%>" tabindex="-1" aria-labelledby="deleteAutoPartsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteAutoPartsLabel">Удаление запчасти</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                        <div class="modal-body">
+                            Вы действительно желаете удалить <%= entry.name%>?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <form action="/delete" method="post">
+                                <input type="hidden" name="id" value="<%= entry.id%>" >
+                                <button type="submit" class="btn btn-outline-danger">Удалить</button>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="updateAutoParts<%= entry.id%>" tabindex="-1" aria-labelledby="updateAutoPartsLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateAutoPartsLabel">Изменить запчасть</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/update" method="post">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="col-form-label">name </label>
+                                <input type="text" name="name" value="<%= entry.name%>" class="form-control" placeholder="name">
+                                <input type="hidden" name="id" value="<%= entry.id%>" >
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-text" class="col-form-label">price</label>
+                                <input type="number" name="price" value="<%= entry.price%>" class="form-control" placeholder="price" min="1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message-text" class="col-form-label">car_models_id</label>
+                                <select class="form-select" name="car_models_id" id="car_models_id">
+                                    <% models.forEach(function(entry) {%>
+                                        <option value="<%= entry.id%>"><%= entry.name%></option>
+                                    <% })%>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Изменить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </tr>
+    <% })%>
+    </tbody>
+</table>
+
+<div class="col text-center">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAutoParts" data-bs-whatever="@mdo">Добавить</button>
+</div>
+<div class="modal fade" id="addAutoParts" tabindex="-1" aria-labelledby="addAutoPartsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAutoPartsLabel">Добавит запчасть</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/insert" method="post">
+            <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="col-form-label">name </label>
+                        <input type="text" name="name" class="form-control" placeholder="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">price</label>
+                        <input type="number" name="price" class="form-control" placeholder="price" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">car_models_id</label>
+                        <select class="form-select" name="car_models_id" id="car_models_id">
+                            <% models.forEach(function(entry) {%>
+                                <option value="<%= entry.id%>"><%= entry.name%></option>
+                            <% })%>
+                        </select>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous">
+    const exampleModal = document.getElementById('exampleModal')
+    exampleModal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        const recipient = button.getAttribute('data-bs-whatever')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        const modalTitle = exampleModal.querySelector('.modal-title')
+        const modalBodyInput = exampleModal.querySelector('.modal-body input')
+
+        modalTitle.textContent = `New message to ${recipient}`
+        modalBodyInput.value = recipient
+    })
+</script>
+</body>
+</html>
